@@ -71,15 +71,16 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<AspNetUser>(entity =>
         {
-            entity.HasNoKey();
+            //entity.HasNoKey();
 
-            entity.Property(e => e.Email).HasMaxLength(256);
+            //entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.FirstName).HasMaxLength(50);
-            entity.Property(e => e.Id).HasMaxLength(450);
+            //entity.Property(e => e.Id).HasMaxLength(450);
             entity.Property(e => e.LastName).HasMaxLength(50);
-            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
-            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
-            entity.Property(e => e.UserName).HasMaxLength(256);
+            //entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            //entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            //entity.Property(e => e.UserName).HasMaxLength(256);
+            entity.Property(e => e.ImageId);
         });
 
         modelBuilder.Entity<AspNetUserClaim>(entity =>
