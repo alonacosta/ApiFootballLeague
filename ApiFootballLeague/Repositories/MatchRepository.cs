@@ -13,6 +13,21 @@ namespace ApiFootballLeague.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<Round>> GetRoundsAsync()
+        {
+            return await _context.Rounds                
+             .OrderByDescending(g => g.DateStart)
+             .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Match>> GetMatchesByRoundIdAsync(int roundId)
+        {
+            return await _context.Matches
+                .Include(m => m.Round)                             
+                .Where(p => p.RoundId == roundId)
+                .ToListAsync();
+        }
+
         public async Task<List<StatisticsViewModel>> CalculateStatisticsAsync()
         {
             var clubs = await _context.Clubs.ToListAsync();
