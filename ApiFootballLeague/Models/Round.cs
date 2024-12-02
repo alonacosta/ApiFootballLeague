@@ -14,4 +14,6 @@ public partial class Round
     public DateTime? DateEnd { get; set; }
 
     public bool IsClosed { get; set; }
+
+    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 }

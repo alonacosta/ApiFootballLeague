@@ -22,4 +22,6 @@ public partial class Match
     public DateTime StartDate { get; set; }
 
     public bool IsFinished { get; set; }
+
+    public virtual Round Round { get; set; } = null!;
 }

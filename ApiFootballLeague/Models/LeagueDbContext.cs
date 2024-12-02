@@ -139,7 +139,11 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<Match>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id);
+            entity.HasOne(m => m.Round) 
+                .WithMany(r => r.Matches)        
+                .HasForeignKey(m => m.RoundId) 
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Player>(entity =>
@@ -158,7 +162,7 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<Round>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Name).HasMaxLength(50);
         });

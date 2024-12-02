@@ -87,6 +87,7 @@ var connection = builder.Configuration.GetConnectionString("SomeeConnection");
 builder.Services.AddDbContext<LeagueDbContext>(option => option.UseSqlServer(connection));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 
 builder.Services.AddScoped<IBlobHelper, BlobHelper>();
 builder.Services.AddScoped<IUserHelper, UserHelper>();
