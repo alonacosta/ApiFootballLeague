@@ -14,4 +14,10 @@ public partial class Player
     public int ClubId { get; set; }
 
     public int PositionId { get; set; }
+    public string ImageUrl => ImageId == Guid.Empty
+           ? "https://footballleague.blob.core.windows.net/default/no-profile.png"
+           : $"https://footballleague.blob.core.windows.net/players/{ImageId}";
+
+    public virtual Club Club { get; set; } = null!;
+    public virtual Position Position { get; set; } = null!;
 }

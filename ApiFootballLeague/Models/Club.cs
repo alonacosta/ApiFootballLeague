@@ -18,4 +18,6 @@ public partial class Club
     public string? HeadCoach { get; set; }
     public string ImageFullPath => ImageId == Guid.Empty
             ? $"https://footballleague.blob.core.windows.net/default/no-image.jpeg" : $"https://footballleague.blob.core.windows.net/clubs/{ImageId}";
+
+    public virtual ICollection<Player> Players { get; set; } = new List<Player>();
 }

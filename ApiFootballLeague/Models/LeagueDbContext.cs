@@ -118,7 +118,7 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<Club>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Name).HasMaxLength(100);
         });
@@ -148,16 +148,34 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<Player>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id); 
 
-            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .IsRequired();            
+
+            entity.HasOne(e => e.Club) 
+                .WithMany(c => c.Players)
+                .HasForeignKey(e => e.ClubId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            entity.HasOne(e => e.Position) 
+                .WithMany()
+                .HasForeignKey(e => e.PositionId)
+                .OnDelete(DeleteBehavior.Restrict);
+           
+            //entity.HasNoKey();
+
+            //entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Position>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id); 
 
-            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .IsRequired();
         });
 
         modelBuilder.Entity<Round>(entity =>

@@ -88,6 +88,7 @@ builder.Services.AddDbContext<LeagueDbContext>(option => option.UseSqlServer(con
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+builder.Services.AddScoped<IClubRepository, ClubRepository>();
 
 builder.Services.AddScoped<IBlobHelper, BlobHelper>();
 builder.Services.AddScoped<IUserHelper, UserHelper>();
