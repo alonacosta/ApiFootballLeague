@@ -50,8 +50,8 @@ namespace ApiFootballLeague.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var user = await _userRepository.GetUserByEmailAsync(model.Email);
+            var user = await _userHelper.GetUserByEmailAsync(model.Email);
+            //var user = await _userRepository.GetUserByEmailAsync(model.Email);
             if (user != null)
             {
                 return BadRequest("User already exists.");
@@ -61,7 +61,7 @@ namespace ApiFootballLeague.Controllers
             {                    
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                UserName = model.UserName,
+                UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
             };
@@ -79,7 +79,7 @@ namespace ApiFootballLeague.Controllers
                 token = myToken
             }, protocol: HttpContext.Request.Scheme);
 
-            var response = _mailHelper.SendEmail(model.UserName, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+            var response = _mailHelper.SendEmail(model.Email, "Email confirmation", $"<h1>Email Confirmation</h1>" +
                 $"To allow the user, " +
                 $"please click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
 
@@ -155,7 +155,8 @@ namespace ApiFootballLeague.Controllers
                 accesstoken = jwt,
                 tokentype = "bearer",
                 userid = currentUser.Id,
-                username = currentUser.UserName
+                username = currentUser.Email,
+                name = $"{currentUser.FirstName} {currentUser.LastName}"
             });
         }
 
