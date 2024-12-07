@@ -17,5 +17,8 @@
         public DateTime StartDate { get; set; }
 
         public bool IsFinished { get; set; }
+
+        public string? ImageHomeTeamUrl { get; set; }
+        public string? ImageAwayTeamUrl { get; set; }
     }
 }

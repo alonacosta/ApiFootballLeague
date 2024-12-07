@@ -2,9 +2,7 @@
 using ApiFootballLeague.Models;
 using ApiFootballLeague.Repositories;
 using ApiFootballLeague.ViewModels;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,10 +53,10 @@ namespace ApiFootballLeague.Controllers
             if (user != null)
             {
                 return BadRequest("User already exists.");
-            }          
-                
+            }
+
             user = new AspNetUser
-            {                    
+            {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 UserName = model.Email,
@@ -68,9 +66,9 @@ namespace ApiFootballLeague.Controllers
 
             var result = await _userHelper.AddUserAsync(user, model.Password);
             if (!result.Succeeded)
-            {                
+            {
                 return BadRequest(result.Errors.Select(e => e.Description));
-            }            
+            }
 
             string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
             string tokenLink = Url.Action("ConfirmEmail", "Account", new
@@ -87,7 +85,7 @@ namespace ApiFootballLeague.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Email could not be sent.");
             }
-            return StatusCode(StatusCodes.Status201Created, $"User created successfully! Confirmation email sent.");   
+            return StatusCode(StatusCodes.Status201Created, $"User created successfully! Confirmation email sent.");
         }
 
         [HttpGet("ConfirmEmail")]
@@ -161,9 +159,9 @@ namespace ApiFootballLeague.Controllers
         }
 
         [Authorize]
-        [HttpPost("UploadImage")]
+        [HttpPost("UploadPhoto")]       
         public async Task<IActionResult> UploadUserPhoto(IFormFile file)
-        {
+        {             
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             
             var user = await _userRepository.GetUserByEmailAsync(userEmail);
@@ -195,15 +193,17 @@ namespace ApiFootballLeague.Controllers
             return Ok("Image uploaded successfully");
         }
 
-        [Authorize]
-        [HttpGet("UserImage")]
-        public async Task<IActionResult> GetUserImage()
+        //[Authorize]
+        [HttpGet("[action]/{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUserImage(string email)
         {
             //see if user is logged
-            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            //var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             //locate user
-            var user = await _userRepository.GetUserByEmailAsync(userEmail);
+            var user = await _userRepository.GetUserByEmailAsync(email);
             //var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
             if (user == null)
@@ -212,7 +212,7 @@ namespace ApiFootballLeague.Controllers
             }
 
             var userImage = await _context.AspNetUsers
-                .Where(x => x.Email == userEmail)
+                .Where(x => x.Email == email)
                 .Select(x => new
                 {
                     x.ImageUrl,

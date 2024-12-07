@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiFootballLeague.Models;
 
@@ -45,4 +46,7 @@ public partial class AspNetUser : IdentityUser
     public string ImageUrl => ImageId == Guid.Empty
            ? $"https://footballleague.blob.core.windows.net/default/no-profile.png"
            : $"https://footballleague.blob.core.windows.net/users/{ImageId}";
+
+    //[NotMapped]
+    //public IFormFile? File { get; set; }
 }

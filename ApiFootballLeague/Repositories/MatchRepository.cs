@@ -1,6 +1,7 @@
 ﻿using ApiFootballLeague.Models;
 using ApiFootballLeague.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ApiFootballLeague.Repositories
 {
@@ -71,6 +72,24 @@ namespace ApiFootballLeague.Repositories
                 statistics[i].Position = i + 1;
             }
             return statistics;
+        }
+
+        public async Task<Club> GetClubeByNameAsync(string ClubName)
+        {
+            return await _context.Clubs
+                .Include(p => p.Players)
+                .Where(c => c.Name == ClubName)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<string> GetImageClubUrl(string ClubName)
+        {
+            var club = await _context.Clubs
+                .Include(p => p.Players)            
+                .FirstOrDefaultAsync(c => c.Name == ClubName);
+
+           return club.ImageId == Guid.Empty
+            ? $"https://footballleague.blob.core.windows.net/default/no-image.jpeg" : $"https://footballleague.blob.core.windows.net/clubs/{club.ImageId}";
         }
     }
 }

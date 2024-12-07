@@ -62,7 +62,8 @@ namespace ApiFootballLeague.Controllers
             }
 
             IEnumerable<Match> _matches;
-            IEnumerable<MatchViewModel> _matchesViewModel;
+            //IEnumerable<MatchViewModel> _matchesViewModel;
+            var matchViewModels = new List<MatchViewModel>();
 
             try
             {
@@ -73,20 +74,43 @@ namespace ApiFootballLeague.Controllers
                     return NotFound($"Matches not found.");
                 }
 
-                _matchesViewModel = _matches.Select(m => new MatchViewModel
+                //var matchViewModels = new List<MatchViewModel>();
+                foreach (var m in _matches)
                 {
-                    Id = m.Id,
-                    HomeTeam = m.HomeTeam,
-                    AwayTeam = m.AwayTeam,
-                    HomeScore = m.HomeScore,
-                    AwayScore = m.AwayScore,
-                    IsClosed = m.IsClosed,
-                    StartDate = m.StartDate,
-                    IsFinished = m.IsFinished,
-                    
-                });
+                    var homeTeamImageUrl = await _matchRepository.GetImageClubUrl(m.HomeTeam);
+                    var awayTeamImageUrl = await _matchRepository.GetImageClubUrl(m.AwayTeam);
 
-                return Ok(_matchesViewModel);
+                    var matchViewModel = new MatchViewModel
+                    {
+                        Id = m.Id,
+                        HomeTeam = m.HomeTeam,
+                        AwayTeam = m.AwayTeam,
+                        HomeScore = m.HomeScore,
+                        AwayScore = m.AwayScore,
+                        IsClosed = m.IsClosed,
+                        StartDate = m.StartDate,
+                        IsFinished = m.IsFinished,
+                        ImageHomeTeamUrl = homeTeamImageUrl,
+                        ImageAwayTeamUrl = awayTeamImageUrl
+                    };
+
+                    matchViewModels.Add(matchViewModel);
+                }
+                //_matchesViewModel = await Task.WhenAll( _matches.Select(async m => new MatchViewModel
+                //{                    
+                //    Id = m.Id,
+                //    HomeTeam = m.HomeTeam,
+                //    AwayTeam = m.AwayTeam,
+                //    HomeScore = m.HomeScore,
+                //    AwayScore = m.AwayScore,
+                //    IsClosed = m.IsClosed,
+                //    StartDate = m.StartDate,
+                //    IsFinished = m.IsFinished,
+                //    ImageHomeTeamUrl = await _matchRepository.GetImageClubUrl(m.HomeTeam),
+                //    ImageAwayTeamUrl = await _matchRepository.GetImageClubUrl(m.AwayTeam)
+                //}));
+
+                return Ok(matchViewModels);
             }
             catch (Exception ex)
             {

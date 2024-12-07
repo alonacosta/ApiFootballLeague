@@ -42,7 +42,7 @@ namespace ApiFootballLeague.Controllers
                     Capacity = c.Capacity,
                     HeadCoach = c.HeadCoach,
                     ImageFullPath = c.ImageFullPath,
-                });
+                });                
 
                 return Ok(_clubsViewModel);
             }

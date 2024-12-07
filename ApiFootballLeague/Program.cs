@@ -30,7 +30,12 @@ builder.Services.AddIdentity<AspNetUser, IdentityRole>(cfg =>
 
 // configures the application to authenticate users using JWT tokens,
 // verifying the issuer, audience, lifetime and signature key of the issuer
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options => 
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
