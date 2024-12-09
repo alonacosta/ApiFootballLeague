@@ -5,11 +5,13 @@ using ApiFootballLeague.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace ApiFootballLeague.Controllers
 {
@@ -157,6 +159,55 @@ namespace ApiFootballLeague.Controllers
                 name = $"{currentUser.FirstName} {currentUser.LastName}"
             });
         }
+        
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RecoverPassword([FromBody] RecoverPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest("The email doesn't correspont to a registered user.");
+            }
+
+            var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(myToken);
+            var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+            var appUrl = "https://fcng4dz1-7030.uks1.devtunnels.ms";
+
+            string url = $"{appUrl}/ResetPassword?email={model.Email}&token={validToken}";
+
+            Response response = _mailHelper.SendEmail(model.Email, "Rassword Reset Request", $"<h1>We received a request to reset your password.</h1>" +
+                $"If this was not you, please ignore this email. To reset your password, click the link below:</br></br>" +
+                $"<a href = \"{url}\">Reset Password</a>");
+
+            if (response.IsSuccess)
+            {
+                return Ok($"The instructions to recover your password has been sent to email.");
+            }
+            return Ok();
+        }   
+
+
+        [HttpPost("ResetOldPassword")]
+        public async Task<IActionResult> ResetOldPassword([FromForm] ResetOldPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.Username);
+            if (user != null)
+            {                
+                var decodedTokenBytes = WebEncoders.Base64UrlDecode(model.Token);
+                var normalToken = Encoding.UTF8.GetString(decodedTokenBytes);
+                var result = await _userHelper.ResetPasswordAsync(user, normalToken, model.Password);
+                if (result.Succeeded)
+                {
+                    return Ok("Password reset successful.");
+                }
+
+                return BadRequest("Error while resetting the password.");
+            }
+            return NotFound("User not found.");
+        }        
+
 
         [Authorize]
         [HttpPost("UploadPhoto")]       

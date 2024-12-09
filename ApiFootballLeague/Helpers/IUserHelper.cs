@@ -10,5 +10,9 @@ namespace ApiFootballLeague.Helpers
         Task<string> GenerateEmailConfirmationTokenAsync(AspNetUser user);
         Task<AspNetUser> GetUserByIdAsync(string userId);
         Task<IdentityResult> ConfirmEmailAsync(AspNetUser user, string token);
+        Task<string> GeneratePasswordResetTokenAsync(AspNetUser user);
+        Task<IdentityResult> ResetPasswordAsync(AspNetUser user, string token, string newPassword);
+
+        
     }
 }

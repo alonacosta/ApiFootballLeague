@@ -35,5 +35,23 @@ namespace ApiFootballLeague.Helpers
         {
             return await _userManager.ConfirmEmailAsync(user, token);
         }
+        public async Task<string> GeneratePasswordResetTokenAsync(AspNetUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+        public async Task<IdentityResult> ResetPasswordAsync(AspNetUser user, string token, string newPassword)
+        {
+            if (user == null || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(newPassword))
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Description = "Invalid user, token, or password."
+                });
+            }
+
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        
     }
 }
