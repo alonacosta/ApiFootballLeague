@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiFootballLeague.Models;
@@ -55,7 +56,8 @@ public partial class LeagueDbContext : DbContext
     {
         modelBuilder.Entity<AspNetRole>(entity =>
         {
-            entity.HasNoKey();
+            //entity.HasNoKey();
+            entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Id).HasMaxLength(450);
             entity.Property(e => e.Name).HasMaxLength(256);
@@ -101,10 +103,26 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<AspNetUserRole>(entity =>
         {
-            entity.HasNoKey();
+            //entity.HasNoKey();
+            entity.HasKey(e => new { e.UserId, e.RoleId });
 
             entity.Property(e => e.RoleId).HasMaxLength(450);
             entity.Property(e => e.UserId).HasMaxLength(450);
+
+            entity.HasOne<AspNetUser>()
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .IsRequired();
+
+            entity.HasOne<IdentityRole>()
+                  .WithMany()
+                  .HasForeignKey(e => e.RoleId)
+                  .IsRequired();
+
+            entity.HasOne<AspNetRole>(ur => ur.Role)
+                 .WithMany()
+                 .HasForeignKey(ur => ur.RoleId)
+                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<AspNetUserToken>(entity =>

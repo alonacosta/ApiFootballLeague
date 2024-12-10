@@ -308,5 +308,26 @@ namespace ApiFootballLeague.Controllers
                 return StatusCode(500, $"Internal server error no userInfo: {ex.Message}");
             }
         }
+
+        [HttpGet("[action]/{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUserRole(string email)
+        {          
+            var user = await _userRepository.GetUserByEmailAsync(email);            
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var role = await _userHelper.GetUserRoleAsync(user);
+
+            var userRole = new RoleViewModel
+            {
+                RoleName = role,
+            };
+           return Ok(userRole);
+        }
     }
 }
