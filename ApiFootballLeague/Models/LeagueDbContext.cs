@@ -166,7 +166,10 @@ public partial class LeagueDbContext : DbContext
 
         modelBuilder.Entity<Player>(entity =>
         {
-            entity.HasKey(e => e.Id); 
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                  .ValueGeneratedOnAdd();
 
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
